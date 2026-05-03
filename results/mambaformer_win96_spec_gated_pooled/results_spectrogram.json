@@ -1,0 +1,42 @@
+[
+  {
+    "image_type": "spectrogram",
+    "horizon_min": 45,
+    "fusion_mode": "gated_residual",
+    "dino_pool": "mean",
+    "RMSE": 28.96329844651563,
+    "MAE": 18.97594255571399,
+    "MAPE": 13.19437332607824,
+    "R2": 0.8631623356236603
+  },
+  {
+    "image_type": "spectrogram",
+    "horizon_min": 60,
+    "fusion_mode": "gated_residual",
+    "dino_pool": "mean",
+    "RMSE": 35.166707249129715,
+    "MAE": 23.32359988292702,
+    "MAPE": 16.251199288452224,
+    "R2": 0.7980880358376952
+  },
+  {
+    "image_type": "spectrogram",
+    "horizon_min": 75,
+    "fusion_mode": "gated_residual",
+    "dino_pool": "mean",
+    "RMSE": 40.117552780773636,
+    "MAE": 26.919450920917612,
+    "MAPE": 18.95307520200659,
+    "R2": 0.7397028513810455
+  },
+  {
+    "image_type": "spectrogram",
+    "horizon_min": 90,
+    "fusion_mode": "gated_residual",
+    "dino_pool": "mean",
+    "RMSE": 44.365106039088445,
+    "MAE": 30.143602186805015,
+    "MAPE": 21.32654662996782,
+    "R2": 0.6814087731135868
+  }
+]

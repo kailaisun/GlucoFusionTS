@@ -1,0 +1,62 @@
+[
+  {
+    "image_type": "rp",
+    "horizon_min": 15,
+    "fusion_mode": "gated_residual",
+    "dino_pool": "mean",
+    "RMSE": 11.828277022083608,
+    "MAE": 7.22995163155596,
+    "MAPE": 5.113273340979165,
+    "R2": 0.9771946872154318
+  },
+  {
+    "image_type": "rp",
+    "horizon_min": 30,
+    "fusion_mode": "gated_residual",
+    "dino_pool": "mean",
+    "RMSE": 21.36865999590644,
+    "MAE": 13.871724997219312,
+    "MAPE": 9.695094086997193,
+    "R2": 0.9254900439782238
+  },
+  {
+    "image_type": "rp",
+    "horizon_min": 45,
+    "fusion_mode": "gated_residual",
+    "dino_pool": "mean",
+    "RMSE": 28.762254002634787,
+    "MAE": 19.05248471119996,
+    "MAPE": 13.358593517952688,
+    "R2": 0.8650554191979539
+  },
+  {
+    "image_type": "rp",
+    "horizon_min": 60,
+    "fusion_mode": "gated_residual",
+    "dino_pool": "mean",
+    "RMSE": 34.65258757895975,
+    "MAE": 23.256232452265508,
+    "MAPE": 16.508461952721596,
+    "R2": 0.8039485850850248
+  },
+  {
+    "image_type": "rp",
+    "horizon_min": 75,
+    "fusion_mode": "gated_residual",
+    "dino_pool": "mean",
+    "RMSE": 40.33901349072004,
+    "MAE": 27.32195253535543,
+    "MAPE": 19.459578407220686,
+    "R2": 0.7368210852888164
+  },
+  {
+    "image_type": "rp",
+    "horizon_min": 90,
+    "fusion_mode": "gated_residual",
+    "dino_pool": "mean",
+    "RMSE": 44.72473422283586,
+    "MAE": 30.305074023874823,
+    "MAPE": 21.181004564098608,
+    "R2": 0.6762227712974231
+  }
+]

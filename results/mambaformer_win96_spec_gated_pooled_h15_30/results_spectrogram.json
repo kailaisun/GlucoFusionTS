@@ -1,0 +1,22 @@
+[
+  {
+    "image_type": "spectrogram",
+    "horizon_min": 15,
+    "fusion_mode": "gated_residual",
+    "dino_pool": "mean",
+    "RMSE": 11.977037573758787,
+    "MAE": 7.306192830794912,
+    "MAPE": 5.183957473946616,
+    "R2": 0.9766174494138031
+  },
+  {
+    "image_type": "spectrogram",
+    "horizon_min": 30,
+    "fusion_mode": "gated_residual",
+    "dino_pool": "mean",
+    "RMSE": 21.10994836009763,
+    "MAE": 13.979373307811347,
+    "MAPE": 10.146257266965764,
+    "R2": 0.9272833151692368
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "image_type": "RP",
+    "horizon_min": 15,
+    "MAE": 7.22995163155596,
+    "RMSE": 11.828277022083608,
+    "MAPE": 5.113273340979165,
+    "R2": 0.9771946872154318,
+    "fusion_mode": "gated_residual",
+    "dino_pool": "mean"
+  },
+  {
+    "image_type": "MTF",
+    "horizon_min": 30,
+    "MAE": 13.6160946948861,
+    "RMSE": 20.999115360530368,
+    "MAPE": 9.67222215503222,
+    "R2": 0.9280448756536972,
+    "fusion_mode": "gated_residual",
+    "dino_pool": "mean"
+  },
+  {
+    "image_type": "MTF",
+    "horizon_min": 45,
+    "MAE": 18.789951663324057,
+    "RMSE": 28.624028526948862,
+    "MAPE": 13.42179129260614,
+    "R2": 0.8663493343523028,
+    "fusion_mode": "gated_residual",
+    "dino_pool": "mean"
+  },
+  {
+    "image_type": "RP",
+    "horizon_min": 60,
+    "MAE": 23.256232452265508,
+    "RMSE": 34.65258757895975,
+    "MAPE": 16.508461952721596,
+    "R2": 0.8039485850850248,
+    "fusion_mode": "gated_residual",
+    "dino_pool": "mean"
+  },
+  {
+    "image_type": "SPEC",
+    "horizon_min": 75,
+    "MAE": 26.919450920917612,
+    "RMSE": 40.117552780773636,
+    "MAPE": 18.95307520200659,
+    "R2": 0.7397028513810455,
+    "fusion_mode": "gated_residual",
+    "dino_pool": "mean"
+  },
+  {
+    "image_type": "SPEC",
+    "horizon_min": 90,
+    "MAE": 30.143602186805015,
+    "RMSE": 44.365106039088445,
+    "MAPE": 21.32654662996782,
+    "R2": 0.6814087731135868,
+    "fusion_mode": "gated_residual",
+    "dino_pool": "mean"
+  }
+]

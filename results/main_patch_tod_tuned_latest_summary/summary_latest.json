@@ -1,0 +1,10 @@
+{
+  "AvgMAE": 20.003536047857356,
+  "AvgRMSE": 29.972106066547852,
+  "OriginalAvgMAE": 20.06716666666667,
+  "OriginalAvgRMSE": 30.125666666666664,
+  "DeltaAvgMAE": 0.06363061880931298,
+  "DeltaAvgRMSE": 0.15356060011881212,
+  "GeneratedAt": "2026-05-04",
+  "Note": "Latest completed snapshot; some hyperparameter screens may still be running."
+}

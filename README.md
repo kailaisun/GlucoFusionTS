@@ -8,6 +8,26 @@ This repository contains the experimental code and saved results for a new blood
 
 All experiments use a 96-step CGM input window and evaluate 15, 30, 45, 60, 75, and 90 minute forecasting horizons. MAE and RMSE are computed after inverse scaling back to glucose values.
 
+### Latest Tuned Main Spectrogram Patch-Token Results
+
+The current main model is MambaFormer-SpecPatch: a 96-step MambaFormer sequence encoder fused with frozen DINOv2 spectrogram patch tokens through cross-attention, gated residual prediction, and time-of-day encoding. The table below reports the latest completed hyperparameter-tuned snapshot. Some longer-running tuning jobs may still be active, so the raw candidate files are also included for auditability.
+
+| Horizon | Selected Variant | MAE | RMSE | Delta MAE vs Previous | Delta RMSE vs Previous |
+|---:|---|---:|---:|---:|---:|
+| 15 min | Previous main result | 7.240 | 11.795 | 0.000 | 0.000 |
+| 30 min | `hp_current_e30` | **13.599** | **20.958** | 0.115 | 0.104 |
+| 45 min | Previous main result | 18.756 | 28.434 | 0.000 | 0.000 |
+| 60 min | Previous main result | 23.272 | 34.650 | 0.000 | 0.000 |
+| 75 min | Previous main result | 27.007 | 39.781 | 0.000 | 0.000 |
+| 90 min | `hp_wd1e5` | **30.148** | **44.215** | 0.266 | 0.817 |
+| Avg | - | **20.004** | **29.972** | 0.064 | 0.154 |
+
+Latest tuned summary files:
+
+- Best-by-horizon table: `results/main_patch_tod_tuned_latest_summary/best_by_horizon_latest.csv`
+- All completed tuning candidates: `results/main_patch_tod_tuned_latest_summary/all_completed_candidates.csv`
+- Machine-readable summary: `results/main_patch_tod_tuned_latest_summary/summary_latest.json`
+
 ### Single-Image Representation Results
 
 | Image | 15 min MAE/RMSE | 30 min MAE/RMSE | 45 min MAE/RMSE | 60 min MAE/RMSE | 75 min MAE/RMSE | 90 min MAE/RMSE |
@@ -46,6 +66,7 @@ For single-image experiments, one image representation is fused with the MambaFo
 - Best single-image result by horizon: `results/mambaformer_win96_all_single_img_gated_pooled/best_by_horizon.csv`
 - Four-image adaptive fusion summary: `results/mambaformer_win96_all4_modality_attention/summary_all4_attention.csv`
 - Full four-image fusion JSON: `results/mambaformer_win96_all4_modality_attention/results_all.json`
+- Latest tuned MambaFormer-SpecPatch summary: `results/main_patch_tod_tuned_latest_summary/best_by_horizon_latest.csv`
 
 Model checkpoint files are not committed because they are large. The committed result files contain the reported MAE, RMSE, MAPE, R2, and learned modality-attention weights.
 

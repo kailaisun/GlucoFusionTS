@@ -138,6 +138,44 @@ class DINOv2ImageEncoder(nn.Module):
         return tokens
 
 
+class CNNImageEncoder(nn.Module):
+    """
+    Lightweight image encoder for testing whether a generated image
+    representation is useful without relying on DINOv2.
+
+    Returns one image token per selected image: (B, n_img, d_out).
+    """
+
+    def __init__(self, d_out=128):
+        super().__init__()
+        self.encoder = nn.Sequential(
+            nn.Conv2d(3, 32, kernel_size=7, stride=2, padding=3),
+            nn.BatchNorm2d(32),
+            nn.GELU(),
+            nn.MaxPool2d(kernel_size=3, stride=2, padding=1),
+            nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1),
+            nn.BatchNorm2d(64),
+            nn.GELU(),
+            nn.Conv2d(64, 128, kernel_size=3, stride=2, padding=1),
+            nn.BatchNorm2d(128),
+            nn.GELU(),
+            nn.AdaptiveAvgPool2d(1),
+        )
+        self.proj = nn.Linear(128, d_out)
+
+    def forward(self, images, img_indices=None):
+        B = images.shape[0]
+        if img_indices is None:
+            img_indices = list(range(images.shape[1]))
+        selected = images[:, img_indices]
+        n_img = len(img_indices)
+        C, H, W = selected.shape[2], selected.shape[3], selected.shape[4]
+        imgs_flat = selected.reshape(B * n_img, C, H, W)
+        feats = self.encoder(imgs_flat).flatten(1)
+        tokens = self.proj(feats).view(B, n_img, -1)
+        return tokens
+
+
 # ─── 3. Time-of-Day Encoder ──────────────────────────────────────────────────
 
 class TimeOfDayEncoder(nn.Module):
@@ -273,17 +311,20 @@ class MultimodalMambaDINOv2(nn.Module):
                  d_tod=32, freeze_dinov2=True, image_type='all',
                  use_image=True, use_tod=True,
                  fusion_mode='cross_attn', dino_pool='none',
-                 modality_fusion='none'):
+                 modality_fusion='none', image_encoder='dino'):
         super().__init__()
         assert use_image or use_tod, 'at least one of use_image / use_tod must be True'
-        if fusion_mode not in ('cross_attn', 'gated_residual'):
+        if fusion_mode not in ('cross_attn', 'gated_residual', 'simple_concat'):
             raise ValueError(f'Unsupported fusion_mode: {fusion_mode}')
-        if modality_fusion not in ('none', 'attention'):
+        if modality_fusion not in ('none', 'attention', 'uniform'):
             raise ValueError(f'Unsupported modality_fusion: {modality_fusion}')
+        if image_encoder not in ('dino', 'cnn'):
+            raise ValueError(f'Unsupported image_encoder: {image_encoder}')
         self.use_image = use_image
         self.use_tod   = use_tod
         self.fusion_mode = fusion_mode
         self.modality_fusion = modality_fusion
+        self.image_encoder = image_encoder
 
         if image_type == 'all':
             self.img_indices = [0, 1, 2, 3]
@@ -296,17 +337,23 @@ class MultimodalMambaDINOv2(nn.Module):
             dim_feedforward=dim_feedforward, dropout=dropout)
 
         if use_image:
-            self.img_enc = DINOv2ImageEncoder(d_out=d_model, freeze=freeze_dinov2, pool=dino_pool)
+            if image_encoder == 'dino':
+                self.img_enc = DINOv2ImageEncoder(d_out=d_model, freeze=freeze_dinov2, pool=dino_pool)
+            else:
+                self.img_enc = CNNImageEncoder(d_out=d_model)
             if modality_fusion == 'attention':
                 self.modality_attn = ModalityAttentionFusion(
                     d_model=d_model, d_tod=d_tod if use_tod else 0)
-            self.fusion  = CrossAttentionFusion(d_model=d_model,
-                                                n_heads=n_heads, dropout=dropout)
+            if fusion_mode != 'simple_concat':
+                self.fusion  = CrossAttentionFusion(d_model=d_model,
+                                                    n_heads=n_heads, dropout=dropout)
 
         if use_tod:
             self.tod_enc = TimeOfDayEncoder(d_out=d_tod)
 
         d_head = d_model + (d_tod if use_tod else 0)
+        if fusion_mode == 'simple_concat' and use_image:
+            d_head = d_model * 2 + (d_tod if use_tod else 0)
         if fusion_mode == 'gated_residual' and use_image:
             self.base_head = ForecastHead(d_in=d_head)
             self.delta_head = ForecastHead(d_in=d_head)
@@ -338,9 +385,20 @@ class MultimodalMambaDINOv2(nn.Module):
             if self.modality_fusion == 'attention':
                 img_tokens, alpha = self.modality_attn(seq_feat, tod_feat, img_tokens)
                 aux['modality_alpha'] = alpha
-            seq_tokens = self.fusion(seq_tokens, img_tokens)
+            elif self.modality_fusion == 'uniform':
+                n_tokens = img_tokens.shape[1]
+                alpha = img_tokens.new_full(
+                    (img_tokens.shape[0], n_tokens), 1.0 / n_tokens)
+                img_tokens = img_tokens.mean(dim=1, keepdim=True)
+                aux['modality_alpha'] = alpha
+            if self.fusion_mode != 'simple_concat':
+                seq_tokens = self.fusion(seq_tokens, img_tokens)
 
         fused_feat = seq_tokens.mean(dim=1)          # (B, d_model)
+
+        if self.fusion_mode == 'simple_concat' and self.use_image:
+            img_feat = img_tokens.mean(dim=1)
+            fused_feat = torch.cat([fused_feat, img_feat], dim=-1)
 
         if self.use_tod:
             base_combined = torch.cat([seq_feat, tod_feat], dim=-1)

@@ -11,7 +11,7 @@ Usage
 image_type : rp | spectrogram | gaf | mtf | all
   Dataset order: [RP(0), Spectrogram(1), GAF(2), MTF(3)]
 """
-import sys, os, json, argparse, datetime
+import sys, os, json, argparse, datetime, random
 import numpy as np
 import pandas as pd
 import torch
@@ -37,16 +37,24 @@ def parse_args():
     p.add_argument('--grad_accum',  type=int,  default=4)
     p.add_argument('--epochs',      type=int,  default=20)
     p.add_argument('--lr',          type=float, default=1e-4)
+    p.add_argument('--weight_decay', type=float, default=1e-4)
+    p.add_argument('--dropout',     type=float, default=0.1)
     p.add_argument('--patience',    type=int,  default=5)
+    p.add_argument('--seed',        type=int,  default=0)
     p.add_argument('--num_workers', type=int,  default=4)
     p.add_argument('--d_model',     type=int,  default=128)
     p.add_argument('--n_heads',     type=int,  default=4)
     p.add_argument('--fusion_mode', type=str,  default='cross_attn',
-                   choices=['cross_attn', 'gated_residual'])
+                   choices=['cross_attn', 'gated_residual', 'simple_concat'])
+    p.add_argument('--image_encoder', type=str, default='dino',
+                   choices=['dino', 'cnn'])
     p.add_argument('--dino_pool',   type=str,  default='none',
                    choices=['none', 'mean', 'cls'])
     p.add_argument('--modality_fusion', type=str, default='none',
-                   choices=['none', 'attention'])
+                   choices=['none', 'attention', 'uniform'])
+    p.add_argument('--use_tod', action=argparse.BooleanOptionalAction,
+                   default=True,
+                   help='Enable/disable cyclic time-of-day feature.')
     p.add_argument('--horizons',    type=str,  default='15,30,45,60,75,90',
                    help='Comma-separated horizon minutes, e.g. 45,60,75,90')
     p.add_argument('--results_dir', type=str,  default='./results/mamba_single_img')
@@ -59,6 +67,15 @@ def parse_args():
             raise ValueError(f'Unsupported horizon minute: {key}')
         args.horizon_steps.append(HORIZON_MAP[key])
     return args
+
+
+def set_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.benchmark = False
 
 
 def compute_metrics(y_true, y_pred):
@@ -156,8 +173,10 @@ def train_one_horizon(h_steps, args, all_train, all_val, all_test, scalers, devi
     hmin = h_steps * 5
     print(f'\n{"="*60}', flush=True)
     print(f'[image={args.image_type}  horizon={hmin}min  IN_LEN={args.in_len}  '
-          f'fusion={args.fusion_mode}  dino_pool={args.dino_pool}  '
-          f'modality_fusion={args.modality_fusion}]', flush=True)
+          f'fusion={args.fusion_mode}  image_encoder={args.image_encoder}  '
+          f'dino_pool={args.dino_pool}  '
+          f'modality_fusion={args.modality_fusion}  '
+          f'use_tod={args.use_tod}]', flush=True)
 
     train_ds = MultimodalCGMDataset(all_train, h_steps, in_len=args.in_len)
     val_ds   = MultimodalCGMDataset(all_val,   h_steps, in_len=args.in_len)
@@ -179,18 +198,20 @@ def train_one_horizon(h_steps, args, all_train, all_val, all_test, scalers, devi
         num_mamba_layers=2,
         num_attn_layers=2,
         dim_feedforward=256,
-        dropout=0.1,
+        dropout=args.dropout,
         d_tod=32,
         freeze_dinov2=True,
         image_type=args.image_type,
+        use_tod=args.use_tod,
         fusion_mode=args.fusion_mode,
+        image_encoder=args.image_encoder,
         dino_pool=args.dino_pool,
         modality_fusion=args.modality_fusion,
     ).to(device)
 
     optimizer = torch.optim.AdamW(
         filter(lambda p: p.requires_grad, model.parameters()),
-        lr=args.lr, weight_decay=1e-4)
+        lr=args.lr, weight_decay=args.weight_decay)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
         optimizer, T_max=args.epochs, eta_min=args.lr * 0.01)
 
@@ -220,6 +241,8 @@ def train_one_horizon(h_steps, args, all_train, all_val, all_test, scalers, devi
     ckpt = torch.load(ckpt_path, weights_only=False)
     model.load_state_dict(ckpt['state_dict'])
     test_m = evaluate(model, test_loader, scalers, device)
+    test_m['BestValMAE'] = float(best_val_mae)
+    test_m['BestEpoch'] = int(best_epoch)
 
     print(f'[RESULT] image={args.image_type} horizon={hmin}min  '
           f'RMSE={test_m["RMSE"]:.3f}  MAE={test_m["MAE"]:.3f}  '
@@ -232,10 +255,16 @@ def train_one_horizon(h_steps, args, all_train, all_val, all_test, scalers, devi
 
 def main():
     args   = parse_args()
+    set_seed(args.seed)
     device = torch.device(f'cuda:{args.gpu}' if torch.cuda.is_available() else 'cpu')
     print(f'[INFO] image_type={args.image_type}  IN_LEN={args.in_len}  '
-          f'fusion={args.fusion_mode}  dino_pool={args.dino_pool}  '
+          f'fusion={args.fusion_mode}  image_encoder={args.image_encoder}  '
+          f'dino_pool={args.dino_pool}  '
           f'modality_fusion={args.modality_fusion}  '
+          f'use_tod={args.use_tod}  '
+          f'seed={args.seed}  '
+          f'lr={args.lr}  weight_decay={args.weight_decay}  '
+          f'dropout={args.dropout}  '
           f'horizons={args.horizons}  device={device}', flush=True)
 
     out_dir = os.path.join(args.results_dir, args.image_type)
@@ -248,8 +277,14 @@ def main():
         m = train_one_horizon(h, args, all_train, all_val, all_test, scalers, device, out_dir)
         summary.append({'image_type': args.image_type, 'horizon_min': h * 5,
                         'fusion_mode': args.fusion_mode,
+                        'image_encoder': args.image_encoder,
                         'dino_pool': args.dino_pool,
-                        'modality_fusion': args.modality_fusion, **m})
+                        'modality_fusion': args.modality_fusion,
+                        'use_tod': args.use_tod,
+                        'seed': args.seed,
+                        'lr': args.lr,
+                        'weight_decay': args.weight_decay,
+                        'dropout': args.dropout, **m})
         result_path = os.path.join(args.results_dir, f'results_{args.image_type}.json')
         with open(result_path, 'w') as f:
             json.dump(summary, f, indent=2)

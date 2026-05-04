@@ -1,0 +1,21 @@
+[
+  {
+    "image_type": "spectrogram",
+    "horizon_min": 90,
+    "fusion_mode": "gated_residual",
+    "image_encoder": "dino",
+    "dino_pool": "none",
+    "modality_fusion": "none",
+    "use_tod": true,
+    "seed": 0,
+    "lr": 0.0001,
+    "weight_decay": 1e-05,
+    "dropout": 0.1,
+    "RMSE": 44.21451291965517,
+    "MAE": 30.147588276275837,
+    "MAPE": 21.460974606793084,
+    "R2": 0.6835679573547659,
+    "BestValMAE": 30.491404243609455,
+    "BestEpoch": 13
+  }
+]

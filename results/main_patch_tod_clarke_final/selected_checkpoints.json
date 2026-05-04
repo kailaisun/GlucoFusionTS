@@ -1,0 +1,80 @@
+[
+  {
+    "MAE": 7.24,
+    "RMSE": 11.795,
+    "variant": "original_full_patch_tod",
+    "horizon_min": 15,
+    "source": "original table",
+    "BestValMAE": null,
+    "BestEpoch": null,
+    "lr": null,
+    "dropout": 0.1,
+    "weight_decay": null,
+    "checkpoint": "results/spec_ablation_gated_patch_tod/spectrogram/best_h3.pt"
+  },
+  {
+    "horizon_min": 30,
+    "variant": "hp_current_e30",
+    "MAE": 13.598628010868293,
+    "RMSE": 20.95812347963193,
+    "BestValMAE": 13.783718978589759,
+    "BestEpoch": 13,
+    "lr": 0.0001,
+    "dropout": 0.1,
+    "weight_decay": 0.0001,
+    "source": "results/main_patch_tod_all_horiz_hparam_search/hp_current_e30/results_spectrogram.json",
+    "checkpoint": "results/main_patch_tod_all_horiz_hparam_search/hp_current_e30/spectrogram/best_h6.pt"
+  },
+  {
+    "MAE": 18.756,
+    "RMSE": 28.434,
+    "variant": "original_full_patch_tod",
+    "horizon_min": 45,
+    "source": "original table",
+    "BestValMAE": null,
+    "BestEpoch": null,
+    "lr": null,
+    "dropout": 0.1,
+    "weight_decay": null,
+    "checkpoint": "results/spec_ablation_gated_patch_tod/spectrogram/best_h9.pt"
+  },
+  {
+    "MAE": 23.272,
+    "RMSE": 34.65,
+    "variant": "original_full_patch_tod",
+    "horizon_min": 60,
+    "source": "original table",
+    "BestValMAE": null,
+    "BestEpoch": null,
+    "lr": null,
+    "dropout": 0.1,
+    "weight_decay": null,
+    "checkpoint": "results/spec_ablation_gated_patch_tod/spectrogram/best_h12.pt"
+  },
+  {
+    "horizon_min": 75,
+    "variant": "hp_lr2e4",
+    "MAE": 26.93454659631283,
+    "RMSE": 39.65219303072226,
+    "BestValMAE": 27.477478468645828,
+    "BestEpoch": 24,
+    "lr": 0.0002,
+    "dropout": 0.1,
+    "weight_decay": 0.0001,
+    "source": "results/main_patch_tod_all_horiz_hparam_search/hp_lr2e4/results_spectrogram.json",
+    "checkpoint": "results/main_patch_tod_all_horiz_hparam_search/hp_lr2e4/spectrogram/best_h15.pt"
+  },
+  {
+    "horizon_min": 90,
+    "variant": "hp_wd1e5",
+    "MAE": 30.147588276275837,
+    "RMSE": 44.21451291965517,
+    "BestValMAE": 30.491404243609455,
+    "BestEpoch": 13,
+    "lr": 0.0001,
+    "dropout": 0.1,
+    "weight_decay": 1e-05,
+    "source": "results/main_patch_tod_90min_hparam_search/hp_wd1e5/results_spectrogram.json",
+    "checkpoint": "results/main_patch_tod_90min_hparam_search/hp_wd1e5/spectrogram/best_h18.pt"
+  }
+]

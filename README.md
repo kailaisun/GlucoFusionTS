@@ -8,7 +8,7 @@ This repository contains the experimental code and saved results for a new blood
 
 All experiments use a 96-step CGM input window and evaluate 15, 30, 45, 60, 75, and 90 minute forecasting horizons. MAE and RMSE are computed after inverse scaling back to glucose values.
 
-### Latest Tuned Main Spectrogram Patch-Token Results
+### Final Tuned Main Spectrogram Patch-Token Results
 
 The current main model is MambaFormer-SpecPatch: a 96-step MambaFormer sequence encoder fused with frozen DINOv2 spectrogram patch tokens through cross-attention, gated residual prediction, and time-of-day encoding. The table below reports the latest completed hyperparameter-tuned snapshot. Some longer-running tuning jobs may still be active, so the raw candidate files are also included for auditability.
 
@@ -18,15 +18,30 @@ The current main model is MambaFormer-SpecPatch: a 96-step MambaFormer sequence 
 | 30 min | `hp_current_e30` | **13.599** | **20.958** | 0.115 | 0.104 |
 | 45 min | Previous main result | 18.756 | 28.434 | 0.000 | 0.000 |
 | 60 min | Previous main result | 23.272 | 34.650 | 0.000 | 0.000 |
-| 75 min | Previous main result | 27.007 | 39.781 | 0.000 | 0.000 |
+| 75 min | `hp_lr2e4` | **26.935** | **39.652** | 0.072 | 0.129 |
 | 90 min | `hp_wd1e5` | **30.148** | **44.215** | 0.266 | 0.817 |
-| Avg | - | **20.004** | **29.972** | 0.064 | 0.154 |
+| Avg | - | **19.991** | **29.951** | 0.076 | 0.175 |
+
+### Clarke Error Grid Clinical Accuracy
+
+Clarke zones are computed from inverse-scaled held-out test predictions. Zone A is clinically accurate; Zone B is a benign error region. Zone A+B is commonly used as the clinically acceptable proportion.
+
+| Horizon | Selected Variant | Zone A % | Zone B % | Zone A+B % | Zone C/D/E % |
+|---:|---|---:|---:|---:|---:|
+| 15 min | Previous main result | 97.23 | 2.41 | 99.64 | 0.36 |
+| 30 min | `hp_current_e30` | 88.67 | 9.88 | 98.54 | 1.46 |
+| 45 min | Previous main result | 80.40 | 16.76 | 97.16 | 2.84 |
+| 60 min | Previous main result | 73.48 | 22.09 | 95.57 | 4.43 |
+| 75 min | `hp_lr2e4` | 68.16 | 26.40 | 94.56 | 5.44 |
+| 90 min | `hp_wd1e5` | 64.70 | 28.82 | 93.53 | 6.47 |
+| Avg | - | **78.77** | **17.73** | **96.50** | 3.50 |
 
 Latest tuned summary files:
 
-- Best-by-horizon table: `results/main_patch_tod_tuned_latest_summary/best_by_horizon_latest.csv`
-- All completed tuning candidates: `results/main_patch_tod_tuned_latest_summary/all_completed_candidates.csv`
-- Machine-readable summary: `results/main_patch_tod_tuned_latest_summary/summary_latest.json`
+- Best-by-horizon table: `results/main_patch_tod_tuned_final_summary/best_by_horizon_final.csv`
+- Clarke Zone A/B table: `results/main_patch_tod_clarke_final/clarke_zone_summary.csv`
+- All completed tuning candidates: `results/main_patch_tod_tuned_final_summary/all_completed_candidates.csv`
+- Machine-readable summary: `results/main_patch_tod_tuned_final_summary/summary_final.json`
 
 ### Single-Image Representation Results
 
@@ -66,7 +81,8 @@ For single-image experiments, one image representation is fused with the MambaFo
 - Best single-image result by horizon: `results/mambaformer_win96_all_single_img_gated_pooled/best_by_horizon.csv`
 - Four-image adaptive fusion summary: `results/mambaformer_win96_all4_modality_attention/summary_all4_attention.csv`
 - Full four-image fusion JSON: `results/mambaformer_win96_all4_modality_attention/results_all.json`
-- Latest tuned MambaFormer-SpecPatch summary: `results/main_patch_tod_tuned_latest_summary/best_by_horizon_latest.csv`
+- Final tuned MambaFormer-SpecPatch summary: `results/main_patch_tod_tuned_final_summary/best_by_horizon_final.csv`
+- Final Clarke Error Grid summary: `results/main_patch_tod_clarke_final/clarke_zone_summary.csv`
 
 Model checkpoint files are not committed because they are large. The committed result files contain the reported MAE, RMSE, MAPE, R2, and learned modality-attention weights.
 

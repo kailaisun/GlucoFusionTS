@@ -1,0 +1,33 @@
+horizon_min,MAE,RMSE,variant,source,BestValMAE,BestEpoch,lr,dropout,weight_decay,status
+15,7.24,11.795,original_full_patch_tod,original table,,,,,,reference
+30,13.714,21.062,original_full_patch_tod,original table,,,,,,reference
+45,18.756,28.434,original_full_patch_tod,original table,,,,,,reference
+60,23.272,34.65,original_full_patch_tod,original table,,,,,,reference
+75,27.007,39.781,original_full_patch_tod,original table,,,,,,reference
+90,30.414,45.032,original_full_patch_tod,original table,,,,,,reference
+15,7.543274302210941,12.190907705768408,hp_current_e30,results/main_patch_tod_all_horiz_hparam_search/hp_current_e30/results_spectrogram.json,7.906906191086065,4,0.0001,0.1,0.0001,completed_tuned
+30,13.598628010868293,20.95812347963193,hp_current_e30,results/main_patch_tod_all_horiz_hparam_search/hp_current_e30/results_spectrogram.json,13.783718978589759,13,0.0001,0.1,0.0001,completed_tuned
+45,18.857289029721862,28.712345187403884,hp_current_e30,results/main_patch_tod_all_horiz_hparam_search/hp_current_e30/results_spectrogram.json,19.00990114065185,11,0.0001,0.1,0.0001,completed_tuned
+60,23.383883462243308,35.09222730117769,hp_current_e30,results/main_patch_tod_all_horiz_hparam_search/hp_current_e30/results_spectrogram.json,23.677306399080614,18,0.0001,0.1,0.0001,completed_tuned
+75,27.055839795657995,39.73044693937024,hp_current_e30,results/main_patch_tod_all_horiz_hparam_search/hp_current_e30/results_spectrogram.json,27.538634465133597,10,0.0001,0.1,0.0001,completed_tuned
+15,7.583251288666078,12.118224336146454,hp_drop005,results/main_patch_tod_all_horiz_hparam_search/hp_drop005/results_spectrogram.json,7.949972338900021,4,0.0001,0.05,0.0001,completed_tuned
+30,13.778587997607268,21.26000045482031,hp_drop005,results/main_patch_tod_all_horiz_hparam_search/hp_drop005/results_spectrogram.json,13.950740974024393,3,0.0001,0.05,0.0001,completed_tuned
+45,18.948539410687435,28.90416074399661,hp_drop005,results/main_patch_tod_all_horiz_hparam_search/hp_drop005/results_spectrogram.json,19.009207219414453,21,0.0001,0.05,0.0001,completed_tuned
+60,23.318330598463657,34.937036711339665,hp_drop005,results/main_patch_tod_all_horiz_hparam_search/hp_drop005/results_spectrogram.json,23.712488005698763,6,0.0001,0.05,0.0001,completed_tuned
+75,27.10304391033867,40.04803753332699,hp_drop005,results/main_patch_tod_all_horiz_hparam_search/hp_drop005/results_spectrogram.json,27.662742322040106,11,0.0001,0.05,0.0001,completed_tuned
+15,7.623404430471257,12.226012163969088,hp_lr2e4,results/main_patch_tod_all_horiz_hparam_search/hp_lr2e4/results_spectrogram.json,7.9389078728713836,2,0.0002,0.1,0.0001,completed_tuned
+30,13.87070641695079,21.476572255596103,hp_lr2e4,results/main_patch_tod_all_horiz_hparam_search/hp_lr2e4/results_spectrogram.json,14.006491398001959,4,0.0002,0.1,0.0001,completed_tuned
+45,18.791937947060664,28.43787976901455,hp_lr2e4,results/main_patch_tod_all_horiz_hparam_search/hp_lr2e4/results_spectrogram.json,18.970639519923086,8,0.0002,0.1,0.0001,completed_tuned
+60,23.282786997130927,34.477890090465195,hp_lr2e4,results/main_patch_tod_all_horiz_hparam_search/hp_lr2e4/results_spectrogram.json,23.479591406209774,11,0.0002,0.1,0.0001,completed_tuned
+75,26.93454659631283,39.65219303072226,hp_lr2e4,results/main_patch_tod_all_horiz_hparam_search/hp_lr2e4/results_spectrogram.json,27.477478468645828,24,0.0002,0.1,0.0001,completed_tuned
+15,7.532707878629179,12.181271452130458,hp_wd1e5,results/main_patch_tod_all_horiz_hparam_search/hp_wd1e5/results_spectrogram.json,7.8962061985259036,4,0.0001,0.1,1e-05,completed_tuned
+30,13.630029990613414,21.01571356269547,hp_wd1e5,results/main_patch_tod_all_horiz_hparam_search/hp_wd1e5/results_spectrogram.json,13.824824700343013,13,0.0001,0.1,1e-05,completed_tuned
+45,18.84945716097928,28.70304045028772,hp_wd1e5,results/main_patch_tod_all_horiz_hparam_search/hp_wd1e5/results_spectrogram.json,18.99075029072587,11,0.0001,0.1,1e-05,completed_tuned
+60,23.279142776219718,34.85946098104223,hp_wd1e5,results/main_patch_tod_all_horiz_hparam_search/hp_wd1e5/results_spectrogram.json,23.540664478435207,18,0.0001,0.1,1e-05,completed_tuned
+75,27.054139258726607,39.71278869634371,hp_wd1e5,results/main_patch_tod_all_horiz_hparam_search/hp_wd1e5/results_spectrogram.json,27.516549351272,10,0.0001,0.1,1e-05,completed_tuned
+90,30.153436180591598,44.25701259268833,hp_current_e30,results/main_patch_tod_90min_hparam_search/hp_current_e30/results_spectrogram.json,30.499730944007624,13,0.0001,0.1,0.0001,completed_tuned
+90,30.162138595101894,44.27751976255832,hp_drop005,results/main_patch_tod_90min_hparam_search/hp_drop005/results_spectrogram.json,30.448782601359635,13,0.0001,0.05,0.0001,completed_tuned
+90,30.362286605197337,44.719480078236685,hp_drop02,results/main_patch_tod_90min_hparam_search/hp_drop02/results_spectrogram.json,30.74791052863778,13,0.0001,0.2,0.0001,completed_tuned
+90,30.28278371080774,44.227112283157,hp_lr2e4,results/main_patch_tod_90min_hparam_search/hp_lr2e4/results_spectrogram.json,30.756032480354175,6,0.0002,0.1,0.0001,completed_tuned
+90,30.227175740275978,44.31964785399775,hp_lr5e5,results/main_patch_tod_90min_hparam_search/hp_lr5e5/results_spectrogram.json,30.636916545797334,20,5e-05,0.1,0.0001,completed_tuned
+90,30.147588276275837,44.21451291965517,hp_wd1e5,results/main_patch_tod_90min_hparam_search/hp_wd1e5/results_spectrogram.json,30.491404243609455,13,0.0001,0.1,1e-05,completed_tuned

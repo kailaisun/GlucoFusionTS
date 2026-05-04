@@ -1,0 +1,10 @@
+{
+  "AvgMAE": 19.991460480576162,
+  "AvgRMSE": 29.950638238334893,
+  "OriginalAvgMAE": 20.06716666666667,
+  "OriginalAvgRMSE": 30.125666666666664,
+  "GeneratedAt": "2026-05-04",
+  "Note": "Final completed hyperparameter-tuning summary.",
+  "DeltaAvgMAE": 0.07570618609050683,
+  "DeltaAvgRMSE": 0.17502842833177112
+}

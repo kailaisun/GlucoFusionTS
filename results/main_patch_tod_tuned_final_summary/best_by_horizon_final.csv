@@ -1,0 +1,7 @@
+horizon_min,MAE,RMSE,variant,source,BestValMAE,BestEpoch,lr,dropout,weight_decay,status,original_MAE,original_RMSE,delta_MAE,delta_RMSE,improve_MAE_pct,improve_RMSE_pct
+15,7.24,11.795,original_full_patch_tod,original table,,,,,,reference,7.24,11.795,0.0,0.0,0.0,0.0
+30,13.598628010868293,20.95812347963193,hp_current_e30,results/main_patch_tod_all_horiz_hparam_search/hp_current_e30/results_spectrogram.json,13.783718978589759,13,0.0001,0.1,0.0001,completed_tuned,13.714,21.062,0.11537198913170776,0.10387652036807182,0.8412716139106589,0.49319400041815503
+45,18.756,28.434,original_full_patch_tod,original table,,,,,,reference,18.756,28.434,0.0,0.0,0.0,0.0
+60,23.272,34.65,original_full_patch_tod,original table,,,,,,reference,23.272,34.65,0.0,0.0,0.0,0.0
+75,26.93454659631283,39.65219303072226,hp_lr2e4,results/main_patch_tod_all_horiz_hparam_search/hp_lr2e4/results_spectrogram.json,27.477478468645828,24,0.0002,0.1,0.0001,completed_tuned,27.007,39.781,0.07245340368717024,0.12880696927773982,0.2682763864448855,0.3237901743991851
+90,30.147588276275837,44.21451291965517,hp_wd1e5,results/main_patch_tod_90min_hparam_search/hp_wd1e5/results_spectrogram.json,30.491404243609455,13,0.0001,0.1,1e-05,completed_tuned,30.414,45.032,0.2664117237241648,0.8174870803448258,0.8759509558892772,1.8153470428691283

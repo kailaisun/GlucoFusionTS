@@ -55,5 +55,43 @@
     "R2": 0.86808200511954,
     "BestValMAE": 18.970639519923086,
     "BestEpoch": 8
+  },
+  {
+    "image_type": "spectrogram",
+    "horizon_min": 60,
+    "fusion_mode": "gated_residual",
+    "image_encoder": "dino",
+    "dino_pool": "none",
+    "modality_fusion": "none",
+    "use_tod": true,
+    "seed": 0,
+    "lr": 0.0002,
+    "weight_decay": 0.0001,
+    "dropout": 0.1,
+    "RMSE": 34.477890090465195,
+    "MAE": 23.282786997130927,
+    "MAPE": 17.003410374586004,
+    "R2": 0.8059203487556829,
+    "BestValMAE": 23.479591406209774,
+    "BestEpoch": 11
+  },
+  {
+    "image_type": "spectrogram",
+    "horizon_min": 75,
+    "fusion_mode": "gated_residual",
+    "image_encoder": "dino",
+    "dino_pool": "none",
+    "modality_fusion": "none",
+    "use_tod": true,
+    "seed": 0,
+    "lr": 0.0002,
+    "weight_decay": 0.0001,
+    "dropout": 0.1,
+    "RMSE": 39.65219303072226,
+    "MAE": 26.93454659631283,
+    "MAPE": 19.42795493603453,
+    "R2": 0.7457066701072971,
+    "BestValMAE": 27.477478468645828,
+    "BestEpoch": 24
   }
 ]

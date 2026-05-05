@@ -42,8 +42,28 @@ Latest tuned summary files:
 - Clarke Zone A/B table: `results/main_patch_tod_clarke_final/clarke_zone_summary.csv`
 - All completed tuning candidates: `results/main_patch_tod_tuned_final_summary/all_completed_candidates.csv`
 - Machine-readable summary: `results/main_patch_tod_tuned_final_summary/summary_final.json`
+- Patch-token single-image summary: `results/mambaformer_win96_single_img_patch_tod_selected/summary_patch_single_img_with_spec.csv`
+- Clarke Zone A bootstrap and McNemar statistics: `results/clarke_zonea_stats/zonea_bootstrap_mcnemar.md`
+- Clarke grid figures: `figures/clarke_grid/`
 
 ### Single-Image Representation Results
+
+The following table reports the latest patch-token version of the single-image experiments. All image variants use the same MambaFormer-96 backbone, frozen DINOv2 patch tokens, gated residual fusion, and time-of-day features.
+
+| Model | Metric | 15 min | 30 min | 45 min | 60 min | 75 min | 90 min | Avg |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| MambaFormer-96 | MAE | 9.330 | 15.280 | 19.750 | 24.110 | 28.670 | 31.670 | 21.468 |
+| MambaFormer-96 | RMSE | 13.660 | 21.830 | 29.400 | 35.680 | 41.880 | 46.410 | 31.477 |
+| + Spectrogram | MAE | **7.240** | **13.599** | **18.756** | **23.272** | **26.935** | **30.148** | **19.991** |
+| + Spectrogram | RMSE | **11.795** | **20.958** | **28.434** | **34.650** | **39.652** | **44.215** | **29.951** |
+| + RP | MAE | 7.538 | 13.974 | 19.162 | 23.456 | 27.192 | 30.426 | 20.291 |
+| + RP | RMSE | 12.181 | 21.321 | 28.727 | 35.060 | 40.144 | 44.359 | 30.299 |
+| + GAF | MAE | 7.559 | 13.833 | 19.090 | 23.522 | 27.175 | 30.358 | 20.256 |
+| + GAF | RMSE | 12.202 | 21.165 | 28.862 | 35.100 | 40.102 | 44.565 | 30.333 |
+| + MTF | MAE | 7.566 | 13.838 | 19.089 | 23.564 | 27.163 | 30.332 | 20.259 |
+| + MTF | RMSE | 12.189 | 21.052 | 28.848 | 34.758 | 40.012 | 44.566 | 30.237 |
+
+The older mean-pooling single-image results are kept below for historical comparison.
 
 | Image | 15 min MAE/RMSE | 30 min MAE/RMSE | 45 min MAE/RMSE | 60 min MAE/RMSE | 75 min MAE/RMSE | 90 min MAE/RMSE |
 |---|---:|---:|---:|---:|---:|---:|
@@ -83,6 +103,9 @@ For single-image experiments, one image representation is fused with the MambaFo
 - Full four-image fusion JSON: `results/mambaformer_win96_all4_modality_attention/results_all.json`
 - Final tuned MambaFormer-SpecPatch summary: `results/main_patch_tod_tuned_final_summary/best_by_horizon_final.csv`
 - Final Clarke Error Grid summary: `results/main_patch_tod_clarke_final/clarke_zone_summary.csv`
+- Patch-token single-image summary: `results/mambaformer_win96_single_img_patch_tod_selected/summary_patch_single_img_with_spec.md`
+- Baseline Clarke comparison: `results/mambaformer96_baseline_clarke/baseline_vs_specpatch_clarke.md`
+- Clarke statistical comparison: `results/clarke_zonea_stats/zonea_bootstrap_mcnemar.md`
 
 Model checkpoint files are not committed because they are large. The committed result files contain the reported MAE, RMSE, MAPE, R2, and learned modality-attention weights.
 
@@ -91,7 +114,17 @@ Model checkpoint files are not committed because they are large. The committed r
 Run the single-image experiments:
 
 ```bash
-GPU=0 PYTHON=python bin/run_mambaformer_single_image_gated_pooled.sh
+python train_mamba_single_img.py \
+  --image_type spectrogram \
+  --in_len 96 \
+  --gpu 0 \
+  --fusion_mode gated_residual \
+  --image_encoder dino \
+  --dino_pool none \
+  --modality_fusion none \
+  --use_tod \
+  --horizons 15,30,45,60,75,90 \
+  --results_dir results/mambaformer_win96_single_img_patch_tod_selected/spectrogram
 ```
 
 Run the four-image adaptive fusion experiment:

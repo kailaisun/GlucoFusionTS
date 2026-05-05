@@ -1,0 +1,12 @@
+{
+  "12": {
+    "checkpoint": "./results/mambaformer96_baseline_clarke/baseline_predlen12/best_model.pt",
+    "epoch": 4,
+    "best_val_loss": 0.004592404844379236
+  },
+  "18": {
+    "checkpoint": "./results/mambaformer96_baseline_clarke/baseline_predlen18/best_model.pt",
+    "epoch": 4,
+    "best_val_loss": 0.00762175899044422
+  }
+}

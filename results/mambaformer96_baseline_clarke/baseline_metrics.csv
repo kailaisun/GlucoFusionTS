@@ -1,0 +1,7 @@
+MAE,RMSE,MAPE,R2,horizon_min,variant,pred_len,checkpoint
+8.158759298823178,12.564873138818637,6.039582064691301,0.974265882785339,15,MambaFormer-96,12,./results/mambaformer96_baseline_clarke/baseline_predlen12/best_model.pt
+14.333067032309401,21.2739862797793,10.793719607647247,0.9261488132016472,30,MambaFormer-96,12,./results/mambaformer96_baseline_clarke/baseline_predlen12/best_model.pt
+18.97982348075127,28.844521458788893,13.525476611255293,0.864282362675604,45,MambaFormer-96,12,./results/mambaformer96_baseline_clarke/baseline_predlen12/best_model.pt
+23.43164037085824,35.05836491981505,16.738357814221555,0.7993302286273797,60,MambaFormer-96,12,./results/mambaformer96_baseline_clarke/baseline_predlen12/best_model.pt
+27.43797308650184,40.49032803658104,19.376016426629853,0.7348429760789321,75,MambaFormer-96,18,./results/mambaformer96_baseline_clarke/baseline_predlen18/best_model.pt
+31.83468787130478,44.5522584081219,24.338283198458022,0.678715175770198,90,MambaFormer-96,18,./results/mambaformer96_baseline_clarke/baseline_predlen18/best_model.pt

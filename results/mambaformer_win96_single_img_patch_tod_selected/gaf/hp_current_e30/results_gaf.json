@@ -1,0 +1,21 @@
+[
+  {
+    "image_type": "gaf",
+    "horizon_min": 30,
+    "fusion_mode": "gated_residual",
+    "image_encoder": "dino",
+    "dino_pool": "none",
+    "modality_fusion": "none",
+    "use_tod": true,
+    "seed": 0,
+    "lr": 0.0001,
+    "weight_decay": 0.0001,
+    "dropout": 0.1,
+    "RMSE": 21.164895364638078,
+    "MAE": 13.832618605701041,
+    "MAPE": 9.646915073531062,
+    "R2": 0.9269042745422751,
+    "BestValMAE": 13.799149951803814,
+    "BestEpoch": 14
+  }
+]

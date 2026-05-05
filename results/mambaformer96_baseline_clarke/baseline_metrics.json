@@ -1,0 +1,62 @@
+[
+  {
+    "MAE": 8.158759298823178,
+    "RMSE": 12.564873138818637,
+    "MAPE": 6.039582064691301,
+    "R2": 0.974265882785339,
+    "horizon_min": 15,
+    "variant": "MambaFormer-96",
+    "pred_len": 12,
+    "checkpoint": "./results/mambaformer96_baseline_clarke/baseline_predlen12/best_model.pt"
+  },
+  {
+    "MAE": 14.333067032309401,
+    "RMSE": 21.2739862797793,
+    "MAPE": 10.793719607647247,
+    "R2": 0.9261488132016472,
+    "horizon_min": 30,
+    "variant": "MambaFormer-96",
+    "pred_len": 12,
+    "checkpoint": "./results/mambaformer96_baseline_clarke/baseline_predlen12/best_model.pt"
+  },
+  {
+    "MAE": 18.97982348075127,
+    "RMSE": 28.844521458788893,
+    "MAPE": 13.525476611255293,
+    "R2": 0.864282362675604,
+    "horizon_min": 45,
+    "variant": "MambaFormer-96",
+    "pred_len": 12,
+    "checkpoint": "./results/mambaformer96_baseline_clarke/baseline_predlen12/best_model.pt"
+  },
+  {
+    "MAE": 23.43164037085824,
+    "RMSE": 35.05836491981505,
+    "MAPE": 16.738357814221555,
+    "R2": 0.7993302286273797,
+    "horizon_min": 60,
+    "variant": "MambaFormer-96",
+    "pred_len": 12,
+    "checkpoint": "./results/mambaformer96_baseline_clarke/baseline_predlen12/best_model.pt"
+  },
+  {
+    "MAE": 27.43797308650184,
+    "RMSE": 40.49032803658104,
+    "MAPE": 19.376016426629853,
+    "R2": 0.7348429760789321,
+    "horizon_min": 75,
+    "variant": "MambaFormer-96",
+    "pred_len": 18,
+    "checkpoint": "./results/mambaformer96_baseline_clarke/baseline_predlen18/best_model.pt"
+  },
+  {
+    "MAE": 31.83468787130478,
+    "RMSE": 44.5522584081219,
+    "MAPE": 24.338283198458022,
+    "R2": 0.678715175770198,
+    "horizon_min": 90,
+    "variant": "MambaFormer-96",
+    "pred_len": 18,
+    "checkpoint": "./results/mambaformer96_baseline_clarke/baseline_predlen18/best_model.pt"
+  }
+]

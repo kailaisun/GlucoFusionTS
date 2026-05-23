@@ -38,6 +38,7 @@ Clarke zones are computed from inverse-scaled held-out test predictions. Zone A 
 
 Latest tuned summary files:
 
+- Comprehensive GlucoImg variant ablation table: `results/glucoimg_variant_ablation/glucoimg_variant_ablation_results.csv`
 - Best-by-horizon table: `results/main_patch_tod_tuned_final_summary/best_by_horizon_final.csv`
 - Clarke Zone A/B table: `results/main_patch_tod_clarke_final/clarke_zone_summary.csv`
 - All completed tuning candidates: `results/main_patch_tod_tuned_final_summary/all_completed_candidates.csv`
@@ -48,20 +49,22 @@ Latest tuned summary files:
 
 ### Single-Image Representation Results
 
-The following table reports the latest patch-token version of the single-image experiments. All image variants use the same MambaFormer-96 backbone, frozen DINOv2 patch tokens, gated residual fusion, and time-of-day features.
+The following table reports the latest patch-token version of the single-image experiments. All structured image variants use the same MambaFormer-96 backbone, frozen DINOv2 patch tokens, gated residual fusion, and time-of-day features. `RawCurve` is included as a control image representation.
 
 | Model | Metric | 15 min | 30 min | 45 min | 60 min | 75 min | 90 min | Avg |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
 | MambaFormer-96 | MAE | 9.330 | 15.280 | 19.750 | 24.110 | 28.670 | 31.670 | 21.468 |
 | MambaFormer-96 | RMSE | 13.660 | 21.830 | 29.400 | 35.680 | 41.880 | 46.410 | 31.477 |
-| + Spectrogram | MAE | **7.240** | **13.599** | **18.756** | **23.272** | **26.935** | **30.148** | **19.991** |
-| + Spectrogram | RMSE | **11.795** | **20.958** | **28.434** | **34.650** | **39.652** | **44.215** | **29.951** |
-| + RP | MAE | 7.538 | 13.974 | 19.162 | 23.456 | 27.192 | 30.426 | 20.291 |
-| + RP | RMSE | 12.181 | 21.321 | 28.727 | 35.060 | 40.144 | 44.359 | 30.299 |
-| + GAF | MAE | 7.559 | 13.833 | 19.090 | 23.522 | 27.175 | 30.358 | 20.256 |
-| + GAF | RMSE | 12.202 | 21.165 | 28.862 | 35.100 | 40.102 | 44.565 | 30.333 |
-| + MTF | MAE | 7.566 | 13.838 | 19.089 | 23.564 | 27.163 | 30.332 | 20.259 |
-| + MTF | RMSE | 12.189 | 21.052 | 28.848 | 34.758 | 40.012 | 44.566 | 30.237 |
+| + RawCurve | MAE | 10.890 | 24.660 | 30.670 | 33.440 | 35.190 | 37.480 | 28.722 |
+| + RawCurve | RMSE | 17.450 | 41.360 | 49.950 | 52.250 | 52.830 | 56.360 | 45.033 |
+| + Spectrogram | MAE | **7.240** | **13.600** | **18.760** | **23.270** | **26.940** | **30.150** | **19.993** |
+| + Spectrogram | RMSE | **11.800** | **20.960** | 28.430 | 34.650 | **39.650** | **44.220** | **29.952** |
+| + RP | MAE | 7.540 | 13.970 | **18.920** | 23.460 | 27.190 | 30.430 | 20.252 |
+| + RP | RMSE | 12.180 | 21.320 | **28.410** | 35.060 | 40.140 | 44.360 | 30.245 |
+| + GAF | MAE | 7.680 | 13.630 | 19.090 | 23.520 | 27.180 | 30.360 | 20.243 |
+| + GAF | RMSE | 12.400 | 21.030 | 28.860 | 35.100 | 40.100 | 44.570 | 30.343 |
+| + MTF | MAE | 7.470 | 13.640 | 19.090 | 23.560 | 27.160 | 30.330 | 20.208 |
+| + MTF | RMSE | 12.190 | 21.050 | 28.850 | **34.610** | 40.010 | 44.570 | 30.213 |
 
 The older mean-pooling single-image results are kept below for historical comparison.
 
@@ -74,16 +77,18 @@ The older mean-pooling single-image results are kept below for historical compar
 
 ### Four-Image Adaptive Fusion Results
 
-The four-image fusion model uses RP, Spectrogram, GAF, and MTF together. Each representation is encoded by frozen DINOv2 ViT-S/14 with mean pooling. A modality-attention layer learns image weights conditioned on the temporal representation and time-of-day feature, followed by gated residual fusion.
+The four-image fusion models use RP, Spectrogram, GAF, and MTF together with DINOv2 patch tokens. Three fusion variants were evaluated: equal averaging, adaptive attention, and direct concatenation. None outperformed the single-spectrogram GlucoImg model on average.
 
-| Horizon | All-4 MAE | All-4 RMSE | Alpha RP | Alpha SPEC | Alpha GAF | Alpha MTF | Best Single Image |
-|---:|---:|---:|---:|---:|---:|---:|---|
-| 15 min | 7.612 | 12.214 | 0.132 | 0.065 | 0.532 | 0.271 | RP: 7.230 / 11.828 |
-| 30 min | 13.902 | 21.338 | 0.160 | 0.010 | 0.751 | 0.078 | MTF: 13.616 / 20.999 |
-| 45 min | 20.033 | 30.424 | 0.095 | 0.019 | 0.711 | 0.175 | MTF: 18.790 / 28.624 |
-| 60 min | 23.343 | 35.206 | 0.094 | 0.382 | 0.397 | 0.127 | RP: 23.256 / 34.653 |
-| 75 min | 26.933 | 40.320 | 0.028 | 0.117 | 0.763 | 0.092 | Spectrogram: 26.919 / 40.118 |
-| 90 min | 30.484 | **44.302** | 0.027 | 0.017 | 0.918 | 0.038 | Spectrogram: 30.144 / 44.365 |
+| Model | Metric | 15 min | 30 min | 45 min | 60 min | 75 min | 90 min | Avg |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| Multi Equal | MAE | 7.640 | 13.820 | 19.620 | 23.270 | 27.320 | 30.650 | 20.387 |
+| Multi Equal | RMSE | 12.250 | 21.200 | 29.320 | 34.750 | 40.410 | 44.980 | 30.485 |
+| Multi Attn | MAE | 7.350 | 14.110 | 19.120 | 24.080 | 27.140 | 31.260 | 20.510 |
+| Multi Attn | RMSE | 11.850 | 21.570 | 28.710 | 35.660 | 40.160 | 45.480 | 30.572 |
+| Multi Concat | MAE | 7.890 | 14.110 | 19.290 | 23.380 | 27.150 | 30.330 | 20.358 |
+| Multi Concat | RMSE | 12.620 | 21.290 | 29.000 | 34.890 | 40.190 | 44.560 | 30.425 |
+| Spectrogram only | MAE | **7.240** | **13.600** | **18.760** | **23.270** | **26.940** | **30.150** | **19.993** |
+| Spectrogram only | RMSE | **11.800** | **20.960** | **28.430** | **34.650** | **39.650** | **44.220** | **29.952** |
 
 ## Method Summary
 

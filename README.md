@@ -1,113 +1,222 @@
-# GlucoFusionTS
+# GlucoImg
 
-Image-fused blood glucose time-series forecasting with MambaFormer and DINOv2.
+### Image-Enhanced Learning for Continuous Glucose Forecasting
 
-This repository contains the experimental code and saved results for a new blood glucose forecasting study that transforms continuous glucose monitoring (CGM) windows into time-series image representations and fuses them with temporal sequence models.
+Official research code for **GlucoImg**, an image-enhanced learning framework that combines continuous glucose monitoring (CGM) sequences with visual representations derived from the same glucose trajectories.
 
-## Main Results
+GlucoImg investigates whether recurrence plots (RP), Gramian angular fields (GAF), Markov transition fields (MTF), and spectrograms provide complementary information beyond conventional one-dimensional sequence modeling. The framework integrates a MambaFormer-based temporal encoder, a frozen DINOv2 image encoder, cyclic time-of-day features, cross-attention, and gated residual fusion for glucose forecasting at horizons from 15 to 90 minutes.
 
-All experiments use a 96-step CGM input window and evaluate 15, 30, 45, 60, 75, and 90 minute forecasting horizons. MAE and RMSE are computed after inverse scaling back to glucose values.
+> **Results policy:** This repository distributes source code and configuration files. Numerical results, trained checkpoints, subject-level predictions, experiment logs, and manuscript figures are intentionally not included. Please refer to the accompanying paper for the complete results.
 
-### Final Tuned Main Spectrogram Patch-Token Results
+## Research Scope
 
-The current main model is MambaFormer-SpecPatch: a 96-step MambaFormer sequence encoder fused with frozen DINOv2 spectrogram patch tokens through cross-attention, gated residual prediction, and time-of-day encoding. The table below reports the latest completed hyperparameter-tuned snapshot. Some longer-running tuning jobs may still be active, so the raw candidate files are also included for auditability.
+The accompanying study evaluates GlucoImg across:
 
-| Horizon | Selected Variant | MAE | RMSE | Delta MAE vs Previous | Delta RMSE vs Previous |
-|---:|---|---:|---:|---:|---:|
-| 15 min | Previous main result | 7.240 | 11.795 | 0.000 | 0.000 |
-| 30 min | `hp_current_e30` | **13.599** | **20.958** | 0.115 | 0.104 |
-| 45 min | Previous main result | 18.756 | 28.434 | 0.000 | 0.000 |
-| 60 min | Previous main result | 23.272 | 34.650 | 0.000 | 0.000 |
-| 75 min | `hp_lr2e4` | **26.935** | **39.652** | 0.072 | 0.129 |
-| 90 min | `hp_wd1e5` | **30.148** | **44.215** | 0.266 | 0.817 |
-| Avg | - | **19.991** | **29.951** | 0.076 | 0.175 |
+- five benchmark CGM cohorts curated under the GLUCOBENCH framework;
+- non-diagnosed, type 1 diabetes, and type 2 diabetes populations;
+- forecasting horizons of 15, 30, 45, 60, 75, and 90 minutes;
+- multiple time-series image representations;
+- an independent external T2D validation cohort; and
+- predictive accuracy, clinical reliability, event detection, and interpretability analyses.
 
-### Clarke Error Grid Clinical Accuracy
+## Method Overview
 
-Clarke zones are computed from inverse-scaled held-out test predictions. Zone A is clinically accurate; Zone B is a benign error region. Zone A+B is commonly used as the clinically acceptable proportion.
+GlucoImg contains three complementary branches:
 
-| Horizon | Selected Variant | Zone A % | Zone B % | Zone A+B % | Zone C/D/E % |
-|---:|---|---:|---:|---:|---:|
-| 15 min | Previous main result | 97.23 | 2.41 | 99.64 | 0.36 |
-| 30 min | `hp_current_e30` | 88.67 | 9.88 | 98.54 | 1.46 |
-| 45 min | Previous main result | 80.40 | 16.76 | 97.16 | 2.84 |
-| 60 min | Previous main result | 73.48 | 22.09 | 95.57 | 4.43 |
-| 75 min | `hp_lr2e4` | 68.16 | 26.40 | 94.56 | 5.44 |
-| 90 min | `hp_wd1e5` | 64.70 | 28.82 | 93.53 | 6.47 |
-| Avg | - | **78.77** | **17.73** | **96.50** | 3.50 |
+1. **CGM sequence branch** — a MambaFormer encoder models temporal dependencies in an eight-hour glucose history.
+2. **Time-series image branch** — the same CGM window is converted into RP, GAF, MTF, or spectrogram images and encoded using a frozen DINOv2 backbone.
+3. **Time-of-day branch** — cyclic sine/cosine features provide circadian context.
 
-Latest tuned summary files:
+Image and sequence representations are integrated through cross-attention. A learned gate controls the contribution of the image-enhanced residual prediction:
 
-- Best-by-horizon table: `results/main_patch_tod_tuned_final_summary/best_by_horizon_final.csv`
-- Clarke Zone A/B table: `results/main_patch_tod_clarke_final/clarke_zone_summary.csv`
-- All completed tuning candidates: `results/main_patch_tod_tuned_final_summary/all_completed_candidates.csv`
-- Machine-readable summary: `results/main_patch_tod_tuned_final_summary/summary_final.json`
-
-### Single-Image Representation Results
-
-| Image | 15 min MAE/RMSE | 30 min MAE/RMSE | 45 min MAE/RMSE | 60 min MAE/RMSE | 75 min MAE/RMSE | 90 min MAE/RMSE |
-|---|---:|---:|---:|---:|---:|---:|
-| RP | **7.230 / 11.828** | 13.872 / 21.369 | 19.052 / 28.762 | **23.256 / 34.653** | 27.322 / 40.339 | 30.305 / 44.725 |
-| Spectrogram | 7.306 / 11.977 | 13.979 / 21.110 | 18.976 / 28.963 | 23.324 / 35.167 | **26.919 / 40.118** | **30.144 / 44.365** |
-| GAF | 7.344 / 11.915 | 14.309 / 22.232 | 19.346 / 29.326 | 23.290 / 35.037 | 27.370 / 40.658 | 30.200 / **44.185** |
-| MTF | 7.780 / 12.170 | **13.616 / 20.999** | **18.790 / 28.624** | 23.415 / 34.986 | 27.064 / 40.160 | 30.267 / 44.636 |
-
-### Four-Image Adaptive Fusion Results
-
-The four-image fusion model uses RP, Spectrogram, GAF, and MTF together. Each representation is encoded by frozen DINOv2 ViT-S/14 with mean pooling. A modality-attention layer learns image weights conditioned on the temporal representation and time-of-day feature, followed by gated residual fusion.
-
-| Horizon | All-4 MAE | All-4 RMSE | Alpha RP | Alpha SPEC | Alpha GAF | Alpha MTF | Best Single Image |
-|---:|---:|---:|---:|---:|---:|---:|---|
-| 15 min | 7.612 | 12.214 | 0.132 | 0.065 | 0.532 | 0.271 | RP: 7.230 / 11.828 |
-| 30 min | 13.902 | 21.338 | 0.160 | 0.010 | 0.751 | 0.078 | MTF: 13.616 / 20.999 |
-| 45 min | 20.033 | 30.424 | 0.095 | 0.019 | 0.711 | 0.175 | MTF: 18.790 / 28.624 |
-| 60 min | 23.343 | 35.206 | 0.094 | 0.382 | 0.397 | 0.127 | RP: 23.256 / 34.653 |
-| 75 min | 26.933 | 40.320 | 0.028 | 0.117 | 0.763 | 0.092 | Spectrogram: 26.919 / 40.118 |
-| 90 min | 30.484 | **44.302** | 0.027 | 0.017 | 0.918 | 0.038 | Spectrogram: 30.144 / 44.365 |
-
-## Method Summary
-
-The model combines three complementary information sources:
-
-- CGM sequence branch: a MambaFormer encoder processes the 96-step glucose history.
-- Image branch: each CGM window is converted into RP, Spectrogram, GAF, or MTF images and encoded with frozen DINOv2.
-- Time branch: the last input timestamp is represented by cyclic time-of-day encoding.
-
-For single-image experiments, one image representation is fused with the MambaFormer sequence feature through gated residual fusion. For four-image fusion, a modality-attention module first selects among RP, Spectrogram, GAF, and MTF before gated residual fusion.
-
-## Result Files
-
-- Single-image summary: `results/mambaformer_win96_all_single_img_gated_pooled/summary_all_images.csv`
-- Best single-image result by horizon: `results/mambaformer_win96_all_single_img_gated_pooled/best_by_horizon.csv`
-- Four-image adaptive fusion summary: `results/mambaformer_win96_all4_modality_attention/summary_all4_attention.csv`
-- Full four-image fusion JSON: `results/mambaformer_win96_all4_modality_attention/results_all.json`
-- Final tuned MambaFormer-SpecPatch summary: `results/main_patch_tod_tuned_final_summary/best_by_horizon_final.csv`
-- Final Clarke Error Grid summary: `results/main_patch_tod_clarke_final/clarke_zone_summary.csv`
-
-Model checkpoint files are not committed because they are large. The committed result files contain the reported MAE, RMSE, MAPE, R2, and learned modality-attention weights.
-
-## Reproducing the Experiments
-
-Run the single-image experiments:
-
-```bash
-GPU=0 PYTHON=python bin/run_mambaformer_single_image_gated_pooled.sh
+```text
+prediction = sequence-only prediction + gate × image-enhanced residual
 ```
 
-Run the four-image adaptive fusion experiment:
+Separate models are trained for each forecasting horizon.
+
+## Repository Structure
+
+```text
+GlucoFusionTS/
+├── bin/                     Shell scripts for running experiments
+├── config/                  Dataset and preprocessing configurations
+├── data_formatter/          Data loading, segmentation, and formatting
+├── exploratory_analysis/    Dataset exploration notebooks
+├── lib/                     Models, image generation, and core methods
+├── paper_results/           Analysis and figure-generation source code
+├── utils/                   Shared training and evaluation utilities
+├── export_clarke_specpatch.py
+│                            Clarke Error Grid export and evaluation
+├── train_mamba_single_img.py
+│                            Main GlucoImg training entry point
+├── requirements.txt         Python dependencies
+└── README.md                Project documentation
+```
+
+Generated data, cached images, checkpoints, logs, figures, and result files should remain local and are not part of the source-code release.
+
+## Installation
+
+The experiments reported in the paper were conducted on Ubuntu 24.04 with Python 3.12 and NVIDIA GPUs. A CUDA-capable GPU is strongly recommended.
+
+```bash
+git clone https://github.com/kailaisun/GlucoFusionTS.git
+cd GlucoFusionTS
+
+python3 -m venv .venv
+source .venv/bin/activate
+
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+The image encoder is loaded through `torch.hub` from the official DINOv2 repository on first use. An internet connection is therefore required for the initial model download.
+
+## Data Preparation
+
+Data are **not distributed with this repository**. Users are responsible for obtaining each dataset from its original source and complying with the corresponding data-use agreement, license, and ethical requirements.
+
+The benchmark pipeline expects the following files:
+
+```text
+raw_data/
+├── colas.csv
+├── dubosson.csv
+├── hall.csv
+├── iglu.csv
+└── weinstock.csv
+```
+
+`iglu.csv` is the legacy filename used by the current configuration for the Broll cohort. Dataset paths and preprocessing settings are defined in `config/*.yaml`.
+
+At minimum, formatted input files require:
+
+| Column | Description |
+|---|---|
+| `id` | Participant identifier |
+| `time` | CGM timestamp |
+| `gl` | Glucose measurement |
+
+Additional covariates may be required by dataset-specific configurations. The preprocessing pipeline performs segmentation, linear interpolation of eligible missing intervals, subject-independent train/test splitting, and training-set-based scaling.
+
+The external ShanghaiT2DM cohort used in the paper is not redistributed through this repository.
+
+## Running GlucoImg
+
+### Main spectrogram model
+
+The following command trains the spectrogram-based GlucoImg model with patch-token DINOv2 features, time-of-day encoding, cross-attention, and gated residual fusion:
 
 ```bash
 python -u train_mamba_single_img.py \
-  --image_type all \
+  --image_type spectrogram \
   --in_len 96 \
   --gpu 0 \
   --fusion_mode gated_residual \
-  --dino_pool mean \
-  --modality_fusion attention \
+  --dino_pool none \
+  --use_tod \
   --horizons 15,30,45,60,75,90 \
-  --results_dir results/mambaformer_win96_all4_modality_attention
+  --lr 1e-4 \
+  --weight_decay 1e-4 \
+  --dropout 0.1 \
+  --seed 0 \
+  --results_dir results/glucoimg_spectrogram
 ```
 
-## Data
+For the five-minute benchmark datasets, `--in_len 96` corresponds to an eight-hour input window. One model is fitted for each requested forecasting horizon.
 
-The experiments use five public CGM datasets: Broll, Colas, Dubosson, Hall, and Weinstock. Data preprocessing follows the existing CGM formatter structure in this repository.
+### Compare individual image representations
+
+Set `--image_type` to one of:
+
+```text
+rp | gaf | mtf | spectrogram
+```
+
+For example:
+
+```bash
+python -u train_mamba_single_img.py \
+  --image_type rp \
+  --gpu 0 \
+  --fusion_mode gated_residual \
+  --dino_pool none \
+  --horizons 15,30,45,60,75,90 \
+  --results_dir results/glucoimg_rp
+```
+
+A batch script for pooled single-representation experiments is also provided:
+
+```bash
+GPU=0 bash bin/run_mambaformer_single_image_gated_pooled.sh
+```
+
+## Generated Files
+
+Training generates files locally under the selected result and cache directories:
+
+```text
+results/              Metrics and model checkpoints
+cache/ts_images/      Generated time-series images
+logs/                 Runtime logs
+output/               Outputs from baseline scripts
+paper_results/plots/  Generated manuscript figures
+```
+
+These paths should be excluded from version control. They can be deleted and regenerated without modifying the source code.
+
+## Evaluation
+
+The paper evaluates forecasting performance after inverse transformation to the original mg/dL scale. The evaluation framework includes:
+
+- mean absolute error (MAE);
+- root mean squared error (RMSE);
+- Clarke Error Grid Zone A and Zone A+B agreement;
+- hyperglycemia and hypoglycemia recall and F1 score;
+- population-stratified and glucose-change-stratified analyses; and
+- spectrogram correspondence and region-masking analyses.
+
+Clarke Error Grid outputs can be generated with:
+
+```bash
+python export_clarke_specpatch.py --help
+```
+
+## Reproducibility Notes
+
+- Benchmark CGM signals are sampled at five-minute intervals.
+- The default benchmark input contains 96 observations (eight hours).
+- Forecasting horizons are 15–90 minutes in 15-minute increments.
+- Splits are subject-independent to prevent participant-level data leakage.
+- The default random seed is `0`.
+- Models are optimized with AdamW and selected using validation MAE.
+- DINOv2 parameters are frozen in the main image branch.
+- Hardware, driver, and library differences may introduce small numerical variation.
+
+## Citation
+
+If you use this code, please cite the accompanying manuscript. The citation will be updated when a DOI and final publication details become available.
+
+```bibtex
+@unpublished{cui_glucoimg,
+  title  = {GlucoImg: Image-Enhanced Learning for Continuous Glucose Forecasting},
+  author = {Cui, Yue and Sun, Kailai},
+  note   = {Manuscript under review}
+}
+```
+
+## Authors and Contact
+
+- **Yue Cui** — Department of Dermatology, Chongqing General Hospital, Chongqing University<br>
+  ORCID: [0009-0006-0836-8362](https://orcid.org/0009-0006-0836-8362) · Email: `cuiyue_medicine@cqu.edu.cn`
+- **Kailai Sun** — Singapore-MIT Alliance for Research and Technology Centre and Massachusetts Institute of Technology<br>
+  ORCID: [0000-0003-1648-3409](https://orcid.org/0000-0003-1648-3409) · Email: `skl24@mit.edu`
+
+## Responsible Use
+
+This software is provided for research and educational purposes only. It is not a medical device and is not intended for diagnosis, treatment selection, real-time clinical decision-making, or patient management. Independent validation and appropriate regulatory review are required before any clinical deployment.
+
+## License
+
+No software license is currently included in this repository. Until a license is added, reuse and redistribution are not automatically permitted. Please contact the authors regarding permissions.

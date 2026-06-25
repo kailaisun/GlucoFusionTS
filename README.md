@@ -16,7 +16,7 @@ The accompanying study evaluates GlucoImg across:
 - non-diagnosed, type 1 diabetes, and type 2 diabetes populations;
 - forecasting horizons of 15, 30, 45, 60, 75, and 90 minutes;
 - multiple time-series image representations;
-- an independent external T2D validation cohort; and
+- an independent T2D cohort with 15-minute CGM sampling
 - predictive accuracy, clinical reliability, event detection, and interpretability analyses.
 
 ## Method Overview
@@ -54,7 +54,6 @@ GlucoFusionTS/
 └── README.md                Project documentation
 ```
 
-Generated data, cached images, checkpoints, logs, figures, and result files should remain local and are not part of the source-code release.
 
 ## Installation
 
@@ -73,34 +72,6 @@ pip install -r requirements.txt
 
 The image encoder is loaded through `torch.hub` from the official DINOv2 repository on first use. An internet connection is therefore required for the initial model download.
 
-## Data Preparation
-
-Data are **not distributed with this repository**. Users are responsible for obtaining each dataset from its original source and complying with the corresponding data-use agreement, license, and ethical requirements.
-
-The benchmark pipeline expects the following files:
-
-```text
-raw_data/
-├── colas.csv
-├── dubosson.csv
-├── hall.csv
-├── iglu.csv
-└── weinstock.csv
-```
-
-`iglu.csv` is the legacy filename used by the current configuration for the Broll cohort. Dataset paths and preprocessing settings are defined in `config/*.yaml`.
-
-At minimum, formatted input files require:
-
-| Column | Description |
-|---|---|
-| `id` | Participant identifier |
-| `time` | CGM timestamp |
-| `gl` | Glucose measurement |
-
-Additional covariates may be required by dataset-specific configurations. The preprocessing pipeline performs segmentation, linear interpolation of eligible missing intervals, subject-independent train/test splitting, and training-set-based scaling.
-
-The external ShanghaiT2DM cohort used in the paper is not redistributed through this repository.
 
 ## Running GlucoImg
 
@@ -152,19 +123,6 @@ A batch script for pooled single-representation experiments is also provided:
 GPU=0 bash bin/run_mambaformer_single_image_gated_pooled.sh
 ```
 
-## Generated Files
-
-Training generates files locally under the selected result and cache directories:
-
-```text
-results/              Metrics and model checkpoints
-cache/ts_images/      Generated time-series images
-logs/                 Runtime logs
-output/               Outputs from baseline scripts
-paper_results/plots/  Generated manuscript figures
-```
-
-These paths should be excluded from version control. They can be deleted and regenerated without modifying the source code.
 
 ## Evaluation
 

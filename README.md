@@ -42,7 +42,6 @@ GlucoFusionTS/
 ├── data_formatter/          Data loading, segmentation, and formatting
 ├── exploratory_analysis/    Dataset exploration notebooks
 ├── lib/                     Models, image generation, and core methods
-├── paper_results/           Analysis and figure-generation source code
 ├── utils/                   Shared training and evaluation utilities
 ├── export_clarke_specpatch.py
 │                            Clarke Error Grid export and evaluation
@@ -90,7 +89,6 @@ python -u train_mamba_single_img.py \
   --weight_decay 1e-4 \
   --dropout 0.1 \
   --seed 0 \
-  --results_dir results/glucoimg_spectrogram
 ```
 
 For the five-minute benchmark datasets, `--in_len 96` corresponds to an eight-hour input window. One model is fitted for each requested forecasting horizon.
@@ -112,7 +110,6 @@ python -u train_mamba_single_img.py \
   --fusion_mode gated_residual \
   --dino_pool none \
   --horizons 15,30,45,60,75,90 \
-  --results_dir results/glucoimg_rp
 ```
 
 A batch script for pooled single-representation experiments is also provided:

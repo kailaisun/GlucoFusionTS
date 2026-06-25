@@ -9,6 +9,7 @@ output/tensorboard_*/*
 
 # ignore folder raw_data
 raw_data/
+raw_data.zip
 
 # ignore pre-complied code
 *.cpython-37.pyc

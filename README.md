@@ -6,8 +6,6 @@ Official research code for **GlucoImg**, an image-enhanced learning framework th
 
 GlucoImg investigates whether recurrence plots (RP), Gramian angular fields (GAF), Markov transition fields (MTF), and spectrograms provide complementary information beyond conventional one-dimensional sequence modeling. The framework integrates a MambaFormer-based temporal encoder, a frozen DINOv2 image encoder, cyclic time-of-day features, cross-attention, and gated residual fusion for glucose forecasting at horizons from 15 to 90 minutes.
 
-> **Results policy:** This repository distributes source code and configuration files. Numerical results, trained checkpoints, subject-level predictions, experiment logs, and manuscript figures are intentionally not included. Please refer to the accompanying paper for the complete results.
-
 ## Research Scope
 
 The accompanying study evaluates GlucoImg across:
